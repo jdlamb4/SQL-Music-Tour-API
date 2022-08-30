@@ -1,6 +1,6 @@
 // DEPENDENCIES
 const { Sequelize, DataTypes,  Model } = require('sequelize')
-const sequelize = new Sequelize(process.env.PG_URI)
+// const sequelize = new Sequelize(process.env.PG_URI) no longer need with the sequelize-cli
 
 // MODEL
 class Band extends Model{}
@@ -30,7 +30,7 @@ Band.init({
 }, {
     sequelize,                           
     modelName: 'Band',
-    tableName: 'band',
+    tableName: 'bands',
     timestamps: false
 }) 
 
