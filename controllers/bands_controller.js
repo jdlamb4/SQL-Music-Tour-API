@@ -1,7 +1,7 @@
 // DEPENDENCIES
 const bands = require('express').Router()
 const db = require('../models')
-const { Band } = db
+const { Band, Meet_Greet, Event, Set_Time } = db
 const { Op } = require('sequelize')
 
 // Index Route 
@@ -22,10 +22,32 @@ bands.get('/', async (req, res) => {
 
 // SHOW Route
 // FIND A SPECIFIC BAND
-bands.get('/:id', async (req, res) => {
+bands.get('/:name', async (req, res) => {
     try {
         const foundBand = await Band.findOne({
-            where: { band_id: req.params.id }
+            where: { name: req.params.name  },
+            include: [
+                { 
+                    model: Meet_Greet, 
+                    as: "meet_greets", 
+                    attributes: { exclude: ["band_id", "event_id"] },
+                    include: { 
+                        model: Event, 
+                        as: "event", 
+                        where: { name: { [Op.like]: `%${req.query.event ? req.query.event : ''}%` } } 
+                    }
+                },
+                { 
+                    model: Set_Time, 
+                    // as: "set_times",
+                    attributes: { exclude: ["band_id", "event_id"] },
+                    include: { 
+                        model: Event, 
+                        as: "event", 
+                        where: { name: { [Op.like]: `%${req.query.event ? req.query.event : ''}%` } } 
+                    }
+                }
+            ] 
         })
         res.status(200).json(foundBand)
     } catch (error) {
@@ -84,3 +106,29 @@ bands.delete('/:id', async (req, res) => {
 
 // EXPORT
 module.exports = bands
+
+
+
+// FIND A SPECIFIC BAND
+bands.get('/:name', async (req, res) => {
+    try {
+        const foundBand = await Band.findOne({
+            where: { name: req.params.name  },
+            include: [ 
+                { 
+                    model: MeetGreet, 
+                    as: "meet_greets",
+                    include: { model: Event, as: "event" } 
+                },
+                { 
+                    model: SetTime,
+                    as: "set_times",
+                    include: { model: Event, as: "event" }
+                }
+            ] 
+        })
+        res.status(200).json(foundBand)
+    } catch (error) {
+        res.status(500).json(error)
+    }
+})

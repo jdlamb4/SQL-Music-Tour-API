@@ -2,7 +2,7 @@
 const {
   Model
 } = require('sequelize');
-const { findAll } = require('./band');
+// const { findAll } = require('./band');
 module.exports = (sequelize, DataTypes) => {
   class Set_Time extends Model {
     /**
